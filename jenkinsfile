@@ -3,6 +3,9 @@ pipeline {
 
     environment {
         VENV = "venv"
+        IMAGE_NAME = "abdulahad9049/python-flask-app"
+        DOCKER_CREDS = "dockerhub-creds"
+        TAG = "latest"
     }
 
     stages {
@@ -15,9 +18,7 @@ pipeline {
 
         stage('Setup Python Virtual Env') {
             steps {
-                sh '''
-                python3 -m venv ${VENV}
-                '''
+                sh 'python3 -m venv ${VENV}'
             }
         }
 
@@ -40,14 +41,37 @@ pipeline {
             }
         }
 
+        stage('Build Docker Image') {
+            steps {
+                sh 'docker build -t ${IMAGE_NAME}:${TAG} .'
+            }
+        }
+
+        stage('Push Docker Image') {
+            steps {
+                withCredentials([usernamePassword(
+                    credentialsId: "${DOCKER_CREDS}",
+                    usernameVariable: 'DOCKER_USER',
+                    passwordVariable: 'DOCKER_PASS'
+                )]) {
+                    sh '''
+                    echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
+                    docker push ${IMAGE_NAME}:${TAG}
+                    '''
+                }
+            }
+        }
     }
 
     post {
         success {
-            echo '✅ Build & Tests Passed'
+            echo '✅ CI/CD Pipeline Completed Successfully'
         }
         failure {
-            echo '❌ Build Failed'
+            echo '❌ Pipeline Failed'
+        }
+        always {
+            sh 'docker logout || true'
         }
     }
 }
