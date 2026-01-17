@@ -66,7 +66,7 @@ pipeline {
         }
          stage('Deploy to EC2 via SSH') {
             steps {
-                sshagent(credentials: ['ubuntu']) {
+                sshagent(credentials: ['ec2-ssh']) {
                     sh """
                     ssh -o StrictHostKeyChecking=no ${EC2_USER}@${EC2_HOST} \
                     'docker stop ${CONTAINER_NAME} || true && \
