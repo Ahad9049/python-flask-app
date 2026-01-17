@@ -7,7 +7,7 @@ pipeline {
         DOCKER_CREDS = "dockerhub-creds"
         TAG = "latest"
         EC2_HOST = "13.60.26.26"
-        EC2_USER = "ec2-user"
+        EC2_USER = "ubuntu"
         CONTAINER_NAME = "python-flask-app"
     }
 
