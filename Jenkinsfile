@@ -6,7 +6,7 @@ pipeline {
         IMAGE_NAME = "abdulahad9049/python-flask-app"
         DOCKER_CREDS = "dockerhub-creds"
         TAG = "latest"
-        EC2_HOST = "13.60.26.26"
+        EC2_HOST = "13.60.40.122"
         EC2_USER = "ubuntu"
         CONTAINER_NAME = "python-flask-app"
     }
