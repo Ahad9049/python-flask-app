@@ -68,17 +68,18 @@ pipeline {
             steps {
                 sshagent(credentials: ['ec2-ssh']) {
                     sh '''
-                    ssh -o StrictHostKeyChecking=no ${EC2_USER}@${EC2_HOST} << EOF
-                      docker stop ${CONTAINER_NAME} || true
-                      docker rm ${CONTAINER_NAME} || true
-                      docker pull ${IMAGE_NAME}:latest
-                      docker run -d \
-                        --name ${CONTAINER_NAME} \
-                        -p 5000:5000 \
-                        ${IMAGE_NAME}:latest
+                    ssh -o StrictHostKeyChecking=no ${EC2_USER}@${EC2_HOST} <<EOF
+                    docker stop ${CONTAINER_NAME} || true
+                    docker rm ${CONTAINER_NAME} || true
+                    docker pull ${IMAGE_NAME}:latest
+                    docker run -d \\
+                    --name ${CONTAINER_NAME} \\
+                    -p 5000:5000 \\
+                    ${IMAGE_NAME}:latest
                     EOF
                     '''
-                }
+               }
+
             }
         }
     }
