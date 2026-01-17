@@ -43,7 +43,7 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
-                sh 'docker build -t ${IMAGE_NAME}:${TAG} .'
+                sh 'docker build --progress=plain -t abdulahad9049/python-flask-app:latest .'
             }
         }
 
