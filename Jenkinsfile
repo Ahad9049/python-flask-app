@@ -6,6 +6,9 @@ pipeline {
         IMAGE_NAME = "abdulahad9049/python-flask-app"
         DOCKER_CREDS = "dockerhub-creds"
         TAG = "latest"
+        EC2_HOST = "ec2-13.60.26.26.compute.amazonaws.com"
+        EC2_USER = "ec2-user"
+        CONTAINER_NAME = "python-flask-app"
     }
 
     stages {
@@ -57,6 +60,23 @@ pipeline {
                     sh '''
                     echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
                     docker push ${IMAGE_NAME}:${TAG}
+                    '''
+                }
+            }
+        }
+         stage('Deploy to EC2 via SSH') {
+            steps {
+                sshagent(credentials: ['ec2-ssh']) {
+                    sh '''
+                    ssh -o StrictHostKeyChecking=no ${EC2_USER}@${EC2_HOST} << EOF
+                      docker stop ${CONTAINER_NAME} || true
+                      docker rm ${CONTAINER_NAME} || true
+                      docker pull ${IMAGE_NAME}:latest
+                      docker run -d \
+                        --name ${CONTAINER_NAME} \
+                        -p 5000:5000 \
+                        ${IMAGE_NAME}:latest
+                    EOF
                     '''
                 }
             }
